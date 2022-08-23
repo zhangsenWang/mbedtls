@@ -108,7 +108,7 @@ DATA_FILES := $(wildcard suites/test_suite_*.data)
 # Make sure that generated data files are included even if they don't
 # exist yet when the makefile is parsed.
 DATA_FILES += $(filter-out $(DATA_FILES),$(GENERATED_DATA_FILES))
-APPS = $(basename $(subst suites/,,$(DATA_FILES)))
+APPS = $(basename test_suite_ssl_connection)
 
 # Construct executable name by adding OS specific suffix $(EXEXT).
 BINARIES := $(addsuffix $(EXEXT),$(APPS))
@@ -160,16 +160,15 @@ C_FILES := $(addsuffix .c,$(APPS))
 # dot in .c file's base name.
 #
 .SECONDEXPANSION:
-%.c: suites/$$(firstword $$(subst ., ,$$*)).function suites/%.data scripts/generate_test_code.py suites/helpers.function suites/main_test.function suites/host_test.function
-	echo "  Gen   $@"
-	$(PYTHON) scripts/generate_test_code.py -f suites/$(firstword $(subst ., ,$*)).function \
-		-d suites/$*.data \
-		-t suites/main_test.function \
-		-p suites/host_test.function \
-		-s suites  \
-		--helpers-file suites/helpers.function \
-		-o .
-
+# %.c: suites/$$(firstword $$(subst ., ,$$*)).function suites/%.data scripts/generate_test_code.py suites/helpers.function suites/main_test.function suites/host_test.function
+# 	echo "  Gen   $@"
+# 	$(PYTHON) scripts/generate_test_code.py -f suites/$(firstword $(subst ., ,$*)).function \
+# 		-d suites/$*.data \
+# 		-t suites/main_test.function \
+# 		-p suites/host_test.function \
+# 		-s suites  \
+# 		--helpers-file suites/helpers.function \
+# 		-o .
 
 $(BINARIES): %$(EXEXT): %.c $(MBEDLIBS) $(TEST_OBJS_DEPS) $(MBEDTLS_TEST_OBJS)
 	echo "  CC    $<"
@@ -177,7 +176,7 @@ $(BINARIES): %$(EXEXT): %.c $(MBEDLIBS) $(TEST_OBJS_DEPS) $(MBEDTLS_TEST_OBJS)
 
 clean:
 ifndef WINDOWS
-	rm -rf $(BINARIES) *.c *.datax
+	rm -rf *.datax
 	rm -f src/*.o src/drivers/*.o src/libmbed*
 	rm -f include/test/instrument_record_status.h
 	rm -rf libtestdriver1
